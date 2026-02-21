@@ -23,3 +23,7 @@ Content-Type: application/json
     "Username": "munzevi",
     "Password": "password123"
 }
+
+###
+### Tüm Kullanıcı İsimlerini Getir
+GET {{host}}/users/names

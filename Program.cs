@@ -24,6 +24,17 @@ app.MapPost("/login", (User loginAttempt) =>
         : Results.Unauthorized();
 });
 
+// 3. GET ALL USERNAMES
+app.MapGet("/users/names", () => 
+{
+    // LINQ kullanarak sadece isimleri "seçiyoruz" (Projection)
+    var names = users.Select(u => u.Username).ToList();
+    
+    return Results.Ok(names);
+}); 
+//tek satırda sşunu da yapabilirdik :
+//app.MapGet("/users/names", () => users.Select(u => u.Username));
+
 app.Run();
 
 // Modern C# Özelliği: Record (Tek satırda DTO/Model oluşturma)

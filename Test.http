@@ -1,0 +1,25 @@
+### Değişken Tanımlama (Opsiyonel ama profesyonelce)
+@hostname = localhost
+@port = 5008
+@host = http://{{hostname}}:{{port}}
+
+### 1. Kullanıcı Kaydı (Register)
+POST {{host}}/register
+Content-Type: application/json
+
+{
+    "Username": "munzevi",
+    "Password": "password123"
+}
+
+### İstekler arasına mutlaka 3 tane diyez koymalısın
+###
+
+### 2. Giriş Yap (Login)
+POST {{host}}/login
+Content-Type: application/json
+
+{
+    "Username": "munzevi",
+    "Password": "password123"
+}

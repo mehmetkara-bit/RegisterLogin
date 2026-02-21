@@ -1,41 +1,30 @@
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+// Geçici bir "veritabanı" (Münzevi usulü bir liste)
+var users = new List<User>();
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
+// 1. REGISTER ENDPOINT
+app.MapPost("/register", (User newUser) => 
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    if (users.Any(u => u.Username == newUser.Username))
+        return Results.BadRequest("Bu kullanıcı zaten var.");
 
-app.MapGet("/weatherforecast", () =>
+    users.Add(newUser);
+    return Results.Ok($"{newUser.Username} başarıyla kaydedildi.");
+});
+
+// 2. LOGIN ENDPOINT
+app.MapPost("/login", (User loginAttempt) => 
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var user = users.FirstOrDefault(u => u.Username == loginAttempt.Username && u.Password == loginAttempt.Password);
+
+    return user is not null 
+        ? Results.Ok($"Hoş geldin {user.Username}!") 
+        : Results.Unauthorized();
+});
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+// Modern C# Özelliği: Record (Tek satırda DTO/Model oluşturma)
+record User(string Username, string Password);
